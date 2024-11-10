@@ -95,35 +95,45 @@ class _ReadDataScaleState extends State<ReadDataScale> {
             ElevatedButton(
               onPressed: SerialPortCommunication.openPort,
               style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
                 textStyle: const TextStyle(fontSize: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
               ),
               child: const Text("Refresh Connection"),
             ),
             const SizedBox(height: 50),
             StreamBuilder<String>(
-                stream: SerialPortCommunication.readData(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text("Waiting for data...");
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else if (snapshot.hasData) {
-                    return Text(
+              stream: SerialPortCommunication.readData() ,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text("Waiting for data...");
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else if (snapshot.hasData) {
+                  return Container(
+                    padding: const EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlueAccent.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Text(
                       snapshot.data!,
                       style: const TextStyle(
-                        fontSize: 36,
+                        fontSize: 46,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
-                    );
-                  } else {
-                    return const Text("No data received.");
-                  }
-                }),
+                    ),
+                  );
+                } else {
+                  return const Text("No data received.");
+                }
+              },
+            ),
           ],
         ),
       ),

@@ -50,61 +50,85 @@ class _ConfigPageState extends State<ConfigPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Port Configuration"),
+        title: const Text(
+          "Port Configuration",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: primaryColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Select Port:", style: TextStyle(fontSize: 16)),
-            DropdownButton<String>(
-              value: selectedPort,
-              hint: const Text("Choose a port"),
-              items: availablePorts.map((port) {
-                return DropdownMenuItem<String>(
-                  value: port,
-                  child: Text(port),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedPort = value;
-                });
-              },
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
             ),
-            const SizedBox(height: 16),
-            const Text("Select Baud Rate:", style: TextStyle(fontSize: 16)),
-            DropdownButton<String>(
-              value: selectedBaudRate,
-              hint: const Text("Choose a baud rate"),
-              items: baudRates.map((rate) {
-                return DropdownMenuItem<String>(
-                  value: rate,
-                  child: Text(rate),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedBaudRate = value;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(primaryColor),
-                foregroundColor: WidgetStateProperty.all(Colors.white),
-
-
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Port Configuration",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text("Select Port:", style: TextStyle(fontSize: 16)),
+                  DropdownButton<String>(
+                    value: selectedPort,
+                    hint: const Text("Choose a port"),
+                    items: availablePorts.map((port) {
+                      return DropdownMenuItem<String>(
+                        value: port,
+                        child: Text(port),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPort = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  const Text("Select Baud Rate:", style: TextStyle(fontSize: 16)),
+                  DropdownButton<String>(
+                    value: selectedBaudRate,
+                    hint: const Text("Choose a baud rate"),
+                    items: baudRates.map((rate) {
+                      return DropdownMenuItem<String>(
+                        value: rate,
+                        child: Text(rate),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedBaudRate = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                      textStyle: const TextStyle(fontSize: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                      ),
+                    ),
+                    onPressed: saveConfig,
+                    child: const Text("Save Configuration"),
+                  ),
+                ],
               ),
-              onPressed: saveConfig,
-              child: const Text("Save Configuration"),
-
             ),
-
-
-          ],
+          ),
         ),
       ),
     );
