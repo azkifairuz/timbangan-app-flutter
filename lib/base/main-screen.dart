@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timbangan_app/base/sidebar.dart';
 import 'package:timbangan_app/screen/configuration.dart';
+import 'package:timbangan_app/screen/home.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -12,7 +12,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final appScreens = [
-    const Center(child: Text("Search")),
+    const ReadDataScale(),
     const ConfigPage(),
 
   ];

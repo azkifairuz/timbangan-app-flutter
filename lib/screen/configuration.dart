@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timbangan_app/constant/constant.dart';
+import 'package:timbangan_app/utils/SerialPortComunicate.dart';
 
 class ConfigPage extends StatefulWidget {
   const ConfigPage({super.key});
@@ -23,13 +25,11 @@ class _ConfigPageState extends State<ConfigPage> {
   }
 
   Future<void> loadPorts() async {
-    // Retrieve available serial ports
-    availablePorts = SerialPort.availablePorts;  // flutter_libserialport provides availablePorts directly
+    availablePorts = SerialPort.availablePorts;
     setState(() {});
   }
 
   Future<void> loadConfig() async {
-    // Load saved configuration from local storage
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       selectedPort = prefs.getString('selectedPort');
@@ -38,7 +38,6 @@ class _ConfigPageState extends State<ConfigPage> {
   }
 
   Future<void> saveConfig() async {
-    // Save configuration to local storage
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedPort', selectedPort ?? '');
     await prefs.setString('selectedBaudRate', selectedBaudRate ?? '');
@@ -93,9 +92,18 @@ class _ConfigPageState extends State<ConfigPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(primaryColor),
+                foregroundColor: WidgetStateProperty.all(Colors.white),
+
+
+              ),
               onPressed: saveConfig,
               child: const Text("Save Configuration"),
+
             ),
+
+
           ],
         ),
       ),

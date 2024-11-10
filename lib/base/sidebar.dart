@@ -12,15 +12,35 @@ class Sidebar extends StatefulWidget {
 
 class _SidebarState extends State<Sidebar> {
   int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     final data = SidebarData();
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 20),
       color: primaryColor,
-      child: ListView.builder(
-          itemCount: data.menu.length,
-          itemBuilder: (context, index) => buildMenuEntry(data, index)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 20.0),
+            child: Text(
+              "Timbangan Brutal",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: data.menu.length,
+              itemBuilder: (context, index) => buildMenuEntry(data, index),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
