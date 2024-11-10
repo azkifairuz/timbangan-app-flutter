@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,6 +41,21 @@ class SerialPortCommunication {
       }
     }
   }
+
+  Stream<String> readData() {
+    final controller = StreamController<String>();
+    try {
+      SerialPortReader reader = SerialPortReader(_serialPort);
+      reader.stream.listen((data) {
+        String receivedData = String.fromCharCodes(data);
+        controller.add(receivedData);
+      });
+    } catch (e) {
+      controller.addError("write data error");
+    }
+    return controller.stream;
+  }
+
 
   Uint8List _stringToUint8List(String data) {
     List<int> codeUnits = data.codeUnits;
