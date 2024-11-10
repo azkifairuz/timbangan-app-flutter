@@ -1,4 +1,4 @@
-# Project-level configuration.
+# Project-level configuration.dart.
 cmake_minimum_required(VERSION 3.14)
 project(timbangan_app LANGUAGES CXX)
 
@@ -10,7 +10,7 @@ set(BINARY_NAME "timbangan_app")
 # versions of CMake.
 cmake_policy(VERSION 3.14...3.25)
 
-# Define build configuration option.
+# Define build configuration.dart option.
 get_property(IS_MULTICONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(IS_MULTICONFIG)
   set(CMAKE_CONFIGURATION_TYPES "Debug;Profile;Release"
