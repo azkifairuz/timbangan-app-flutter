@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
@@ -31,7 +32,7 @@ class SerialPortCommunication {
       }}
   }
 
-   Future<void> writeData(String data) async {
+  static Future<void> writeData(String data) async {
     try{
       _serialPort.write(_stringToUint8List(data));
 
@@ -41,23 +42,38 @@ class SerialPortCommunication {
       }
     }
   }
-
-  Stream<String> readData() {
+  static Future<void> closePort() async {
+    _serialPort.close();
+  }
+  static Stream<String> readData() {
     final controller = StreamController<String>();
     try {
       SerialPortReader reader = SerialPortReader(_serialPort);
       reader.stream.listen((data) {
         String receivedData = String.fromCharCodes(data);
-        controller.add(receivedData);
+
+        if (_isValidJson(receivedData)) {
+          controller.add(receivedData);
+        } else {
+          controller.add("Received data is not JSON: $receivedData");
+        }
       });
     } catch (e) {
-      controller.addError("write data error");
+      controller.addError("Error reading data: $e");
     }
     return controller.stream;
   }
 
+ static bool _isValidJson(String data) {
+    try {
+      json.decode(data);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
-  Uint8List _stringToUint8List(String data) {
+  static Uint8List _stringToUint8List(String data) {
     List<int> codeUnits = data.codeUnits;
     Uint8List uint8list = Uint8List.fromList(codeUnits);
     return uint8list;

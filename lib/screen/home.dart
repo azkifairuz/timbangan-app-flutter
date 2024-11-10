@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:timbangan_app/constant/constant.dart';
+import 'package:timbangan_app/utils/SerialPortComunicate.dart';
 
 class ReadDataScale extends StatefulWidget {
   const ReadDataScale({super.key});
@@ -13,29 +14,58 @@ class _ReadDataScaleState extends State<ReadDataScale> {
   bool isConnected = false;
   String dataFromPort = "No data";
 
-  void toggleConnection() {
-    setState(() {
-      isConnected = !isConnected;
-      dataFromPort = isConnected ? "Connected, waiting for data..." : "No connection";
-    });
-  }
-
-  void refreshConnection() {
-    setState(() {
-      dataFromPort = "Refreshing data...";
-    });
-    Future.delayed(const Duration(seconds: 2), () {
+  void toggleConnection() async {
+    final snackBar = SnackBar(content: Row(
+      children: [
+        const CircularProgressIndicator(),
+        const SizedBox(width: 16,),
+        Text(isConnected? "Disconnecting..." : "Connecting...")
+      ],
+    ),
+    duration: const Duration(days: 1),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    if (isConnected) {
       setState(() {
-        dataFromPort = isConnected ? "Data from port: 123.45" : "No connection";
+        isConnected = false;
+        dataFromPort = "No connection";
       });
-    });
+      await SerialPortCommunication.closePort();
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Disconnected successfully")),
+      );
+    } else {
+      try {
+        await SerialPortCommunication.openPort();
+        setState(() {
+          isConnected = true;
+          dataFromPort = "Connected, waiting for data...";
+        });
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Connected successfully")),
+        );
+      } catch (e) {
+        setState(() {
+          dataFromPort = "Failed to connect: $e";
+        });
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to connect: $e")),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Scale Connection",style: TextStyle(color: Colors.white),),
+        title: const Text(
+          "Scale Connection",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: primaryColor,
       ),
       body: Padding(
@@ -62,35 +92,48 @@ class _ReadDataScaleState extends State<ReadDataScale> {
               ],
             ),
             const SizedBox(height: 30),
-
             ElevatedButton(
-              onPressed: refreshConnection,
+              onPressed: SerialPortCommunication.openPort,
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12), backgroundColor: primaryColor,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
                 textStyle: const TextStyle(fontSize: 16),
               ),
               child: const Text("Refresh Connection"),
             ),
             const SizedBox(height: 50),
-
-            // Teks besar untuk menampilkan data dari port
-            Text(
-              dataFromPort,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
+            StreamBuilder<String>(
+                stream: SerialPortCommunication.readData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Text("Waiting for data...");
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.hasData) {
+                    return Text(
+                      snapshot.data!,
+                      style: const TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    );
+                  } else {
+                    return const Text("No data received.");
+                  }
+                }),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: toggleConnection,
         backgroundColor: isConnected ? dangerColor : secondaryColor,
-        child: Icon(isConnected ? Icons.disabled_visible : Icons.connect_without_contact,color: primaryColor,),
+        child: Icon(
+          isConnected ? Icons.disabled_visible : Icons.connect_without_contact,
+          color: primaryColor,
+        ),
       ),
     );
   }
