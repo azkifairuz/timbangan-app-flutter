@@ -1,6 +1,8 @@
 import 'package:collapsible_sidebar/collapsible_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math show pi;
+
+import 'package:timbangan_app/screen/configuration.dart';
 class Sidebar extends StatefulWidget {
   const Sidebar({super.key});
 
@@ -11,15 +13,17 @@ class Sidebar extends StatefulWidget {
 class _SidebarState extends State<Sidebar> {
   late List<CollapsibleItem> _items;
   late String _headline;
+  late Widget _selectedContent;
   final appScreen = [
     const Center(child: Text("Home")),
-    const Center(child: Text("Setting")),
+    const ConfigPage(),
   ];
   @override
   void initState() {
     super.initState();
     _items = _generateItems;
     _headline = _items.firstWhere((item) => item.isSelected).text;
+    _selectedContent = appScreen[0];
   }
 
   List<CollapsibleItem> get _generateItems {
@@ -27,7 +31,7 @@ class _SidebarState extends State<Sidebar> {
       CollapsibleItem(
           text: 'Home',
           icon: Icons.scale,
-          onPressed: () => setState(() => _headline = 'Home'),
+          onPressed: () =>  _selectContent(0, 'Home'),
           onHold: () => ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text("Home"))),
           isSelected: true,
@@ -43,7 +47,12 @@ class _SidebarState extends State<Sidebar> {
           ]),
     ];
   }
-
+  void _selectContent(int index, String headline) {
+    setState(() {
+      _headline = headline;
+      _selectedContent = appScreen[index];
+    });
+  }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -90,19 +99,9 @@ class _SidebarState extends State<Sidebar> {
       width: double.infinity,
       color: Colors.blueGrey[50],
       child: Center(
-        child: Transform.rotate(
-          angle: math.pi / 2,
-          child: Transform.translate(
-            offset: Offset(-size.height * 0.3, -size.width * 0.23),
-            child: Text(
-              _headline,
-              style: Theme.of(context).textTheme.displayLarge,
-              overflow: TextOverflow.visible,
-              softWrap: false,
-            ),
-          ),
-        ),
+        child: Expanded(child: _selectedContent),
       ),
     );
   }
+
 }
