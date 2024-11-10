@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timbangan_app/base/sidebar.dart';
+import 'package:timbangan_app/base/main-screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,13 +11,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Sidebar(),
+      home: const MainScreen(),
     );
   }
 }
