@@ -14,7 +14,7 @@ class SerialPortCommunication {
       throw Exception('Port or Baud Rate not configured');
     }
     int baudRate = int.parse(selectedBaudRate);
-    _config = SerialPortConfig()
+    SerialPortConfig()
       ..baudRate = baudRate
       ..bits = 8
       ..parity = SerialPortParity.none
@@ -26,7 +26,23 @@ class SerialPortCommunication {
     }on SerialPortError catch (err, _){
       if (kDebugMode) {
         print(SerialPort.lastError);
-
       }}
+  }
+
+   Future<void> readData(String data) async {
+    try{
+      _serialPort.write(_stringToUint8List(data));
+
+    }on SerialPortError catch (err,_){
+      if (kDebugMode) {
+        print(SerialPort.lastError);
+      }
+    }
+  }
+
+  Uint8List _stringToUint8List(String data) {
+    List<int> codeUnits = data.codeUnits;
+    Uint8List uint8list = Uint8List.fromList(codeUnits);
+    return uint8list;
   }
 }
