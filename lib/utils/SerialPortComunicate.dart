@@ -29,7 +29,7 @@ class SerialPortCommunication {
       }}
   }
 
-   Future<void> readData(String data) async {
+   Future<void> writeData(String data) async {
     try{
       _serialPort.write(_stringToUint8List(data));
 
